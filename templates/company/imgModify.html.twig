@@ -1,0 +1,14 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Modifier l'avatar{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Modification du logo de votre company {{company.name}}</h1>
+        <img src="/uploads/images/{{company.cover}}" alt="avatar de {{app.user.email}}">
+        {{form_start(myform)}}
+            {{form_widget(myform)}}
+            <button type="submit" class="btn btn-warning">Confirmez la modification du logo</button>
+        {{form_end(myform)}}
+    </div>
+{% endblock %}

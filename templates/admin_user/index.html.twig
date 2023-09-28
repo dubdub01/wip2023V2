@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration{% endblock %}
+
+{% block body %}
+
+<div class="container">
+	<h1 class="my-5">Gestion des annonces</h1>
+	<div class="table-responsive">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Username</th>
+					<th>Worker</th>
+					<th>Companies</th>
+					<th>Roles</th>
+					<th class="text-center">Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for user in users %}
+					<tr>
+						<td>{{ user.id }}</td>
+						<td>{{ user.username }}</td>
+
+						{% if user.getWorkers() is not empty %}
+							{% set worker = user.getWorkers().first %}
+							{% set url = path('workers_show', {'slug': worker.getSlug()}) %}
+							<td>
+								<a href="{{ url }}">{{ worker.getFirstname() }}</a>
+							</td>
+						{% else %}
+							<td>/</td>
+						{% endif %}
+
+						{% if user.company %}
+							<td>
+								{% for company in user.company %}
+									{% if company %}
+										{% set url = path('companies_show',{'slug':company.slug}) %}
+										<a href="{{ url }}">{{ company.name }}</a>
+										<br>
+									{% endif %}
+								{% else %}
+									/
+								{% endfor %}
+							</td>
+						{% else %}
+							<td>/</td>
+						{% endif %}
+
+						<td>{{ user.roles|join(', ') }}</td>
+
+						<td class="text-center">
+							<div class="btn-group" role="group">
+								<a href="{{ path('admin_user_role', {'slug': user.slug}) }}" class="btn btn-warning">
+									<i class="fa-solid fa-lock"></i>
+								</a>
+								<a href="{{ path('admin_user_delete', {'slug': user.slug}) }}" class="btn btn-danger delete-btn">
+									<i class="fas fa-trash"></i>
+								</a>
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+{% endblock %}

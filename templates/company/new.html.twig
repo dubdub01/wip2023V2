@@ -1,0 +1,69 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Création d'une Company
+{% endblock %}
+
+
+{% block body %}
+
+	<div class="container">
+		<h1>Inscription aux Companies</h1>
+		{% if app.flashes('error')|length > 0 %}
+			<div>
+				{{ app.flashes('error')[0] }}
+			</div>
+		{% endif %}
+
+		{{form_start(myform)}}
+		{{form_widget(myform)}}
+		<button type="submit" class="btn btn-success">Confirmez l'inscription</button>
+		{{form_end(myform)}}
+	</div>
+
+{# <div class="container">
+	<h1>Créer une entreprise</h1>
+	<hr>
+	{{ form_start(myform, { 'attr': { 'class': 'needs-validation', 'novalidate': 'novalidate' } }) }}
+	<div class="form-group">
+		{{ form_label(myform.Name, 'Nom de l\'entreprise', { 'label_attr': { 'class': 'col-form-label' } }) }}
+            {{ form_widget(myform.Name, { 'attr': { 'class': 'form-control', 'placeholder': 'Nom de l\'entreprise' } }) }}
+		{{ form_errors(myform.Name) }}
+	</div>
+	<div class="form-group">
+		{{ form_label(myform.eMail, 'Adresse e-mail', { 'label_attr': { 'class': 'col-form-label' } }) }}
+		{{ form_widget(myform.eMail, { 'attr': { 'class': 'form-control', 'placeholder': 'Adresse e-mail' } }) }}
+		{{ form_errors(myform.eMail) }}
+	</div>
+	<div class="form-group">
+		{{ form_label(myform.Description, 'Description', { 'label_attr': { 'class': 'col-form-label' } }) }}
+		{{ form_widget(myform.Description, { 'attr': { 'class': 'form-control', 'placeholder': 'Description' } }) }}
+		{{ form_errors(myform.Description) }}
+	</div>
+
+	<fieldset class="form-group">
+		<legend class="mt-4">{{ form_label(myform.Visibility, 'Visibilité', { 'label_attr': { 'class': 'col-form-label' } }) }}</legend>
+		<div class="form-check form-switch">
+			{{ form_widget(myform.Visibility, { 'attr': { 'class': 'form-check-input', 'id': 'flexSwitchCheckDefault' } }) }}
+			{{ form_label(myform.Visibility, 'Visibilité', { 'label_attr': { 'class': 'form-check-label-control' } }) }}
+		</div>
+	</fieldset>
+	<div class="form-group">
+		{{ form_label(myform.sector, 'Secteurs d\'activité', { 'label_attr': { 'class': 'form-label select-label' } }) }}
+    {% for sector in myform.sector %}
+        <div class="form-check">
+            {{ form_row(sector, { 'attr': { 'class': 'form-check-input' } }) }}
+        </div>
+    {% endfor %}
+
+	<div class="form-group">
+		{{ form_label(myform.cover, 'cover', { 'label_attr': { 'class': 'col-form-label' } }) }}
+		{{ form_widget(myform.cover, { 'attr': { 'class': 'form-control', 'placeholder': 'Description' } }) }}
+		{{ form_errors(myform.cover) }}
+	</div>
+
+    {{ form_errors(myform.sector) }}
+</div>
+        <button type="submit" class="btn btn-primary">Créer</button>
+        {{ form_end(myform) }} #}
+        
+{% endblock %}

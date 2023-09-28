@@ -1,0 +1,66 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Profil utilisateur
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<h2 class="mb-4">Informations utilisateur</h2>
+		<div class="mb-4">
+			<strong>Nom d'utilisateur:</strong>
+			{{ app.user.username }}
+		</div>
+		<div class="mb-4">
+			<strong>Email:</strong>
+			{{ app.user.email }}
+		</div>
+		<div class="mb-4">
+			<h3>Photo de profil:</h3>
+			<img src="/uploads/images/{{ app.user.image }}" alt="avatar de {{ app.user.email }}" class="img-thumbnail">
+		</div>
+		<div class="mb-4">
+			<a href="{{ path('account_modifimg') }}" class="btn btn-warning">Modifier l'image</a>
+			<a href="{{ path('account_password') }}" class="btn btn-warning">Modifier le mot de passe</a>
+			<a href="{{ path('account_mail') }}" class="btn btn-warning">Modifier l'email</a>
+		</div>
+
+		<h3 class="mb-4">Mes workers:</h3>
+		{% if app.user.workers is not empty %}
+			{% for worker in app.user.workers %}
+				<div class="col-md-12">
+					<div class="header text-center">
+						{% include "worker/show.html.twig" with {worker: worker} %}
+					</div>
+				</div>
+			{% endfor %}
+		{% else %}
+			<div class="alert alert-warning">
+				<p>
+					<strong>{{ app.user.username }}</strong>
+					n'a pas de worker.
+				</p>
+			</div>
+		{% endif %}
+		<h3 class="mb-4">Mes companies:</h3>
+		{% if app.user.company | length > 0 %}
+			<div class="col-md-12">
+				<div class="header text-center">
+					{% for company in app.user.company %}
+						{% include "company/show.html.twig" %}
+					{% endfor %}
+
+				</div>
+			</div>
+		{% else %}
+			<div class="col-md-12">
+				<div class="alert alert-warning">
+					<p>
+						<strong>{{ app.user.username }}</strong>
+						n'a pas de company.
+					</p>
+				</div>
+			</div>
+		{% endif %}
+
+	</div>
+{% endblock %}

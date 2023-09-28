@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}WIP{% endblock %}
+
+{% block body %}
+    <section id="hero" class="py-5">
+        <div class="container text-center">
+            <h1 class="display-4">{{ 'homepage.title' | trans }}</h1>
+            <p class="lead">{{ 'homepage.presentation' | trans }}</p>
+            <div class="d-flex flex-column align-items-center">
+                <a href="{{ path('companies_index') }}" class="btn btn-primary my-2">{{ 'homepage.companies' | trans }}</a>
+                <a href="{{ path('workers_index') }}" class="btn btn-primary my-2">{{ 'homepage.workers' | trans }}</a>
+            </div>
+            <div class="mt-4">
+                <a href="{{ path('account_register') }}" class="btn btn-outline-primary mx-2">Inscription</a>
+                <a href="{{ path('account_login') }}" class="btn btn-outline-primary mx-2">Connexion</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">À propos de WIP</h2>
+                <p>WIP est une plateforme en ligne qui facilite la mise en relation des entreprises et des travailleurs indépendants. Notre objectif est de simplifier le processus de recrutement et de collaboration en offrant un espace où les entreprises peuvent trouver les talents dont elles ont besoin et où les travailleurs indépendants peuvent trouver des opportunités professionnelles.</p>
+            <p>WIP offre une large gamme de secteurs et de compétences, permettant aux entreprises de trouver les meilleurs talents pour leurs projets. Les travailleurs indépendants peuvent créer un profil détaillé, mettre en avant leurs compétences et leur expérience, et être contactés directement par les entreprises intéressées.</p>
+        </div>
+    </section>
+{% endblock %}

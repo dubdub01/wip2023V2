@@ -1,0 +1,15 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Une erreur est survenue{% endblock %}
+
+{% block body %}
+    <div class="container full">
+        <h1>Aie il y a eu une erreur</h1>
+        <div class="alert alert-danger">
+            <p>Veuillez retourner sur la page d'acceuil</p>
+            {# attention avec la gestion du cache de symfony  #}
+            <p>{{exception.message}}</p>
+        </div>
+        <a href="{{path('app_home')}}" class="btn btn-primary m-2">Retour à l'accueil</a>
+    </div>
+{% endblock %}

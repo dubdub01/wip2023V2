@@ -1,0 +1,23 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Création d'un Worker{% endblock %}
+
+
+{% block body %}
+
+
+
+	<div class="container">
+		<h1>Inscription aux Workers</h1>
+		{% if app.flashes('error')|length > 0 %}
+			<div>
+				{{ app.flashes('error')[0] }}
+			</div>
+		{% endif %}
+
+		{{form_start(myform)}}
+		{{form_widget(myform)}}
+		<button type="submit" class="btn btn-success">Confirmez l'inscription</button>
+		{{form_end(myform)}}
+	</div>
+{% endblock %}

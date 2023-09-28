@@ -1,0 +1,50 @@
+{% block body %}
+	{% if (app.user and app.user == company.user) or is_granted('ROLE_ADMIN') %}
+		<div class="text-end mt-4">
+			<div class="btn-group" role="group">
+				<a href="{{ path('company_edit', {'slug': company.slug}) }}" class="btn btn-warning">
+					<i class="fa-solid fa-pen"></i>
+					Modifier</a>
+				<a href="{{ path('company_modifimg', {'slug': company.slug}) }}" class="btn btn-warning">
+					<i class="fa-solid fa-image"></i>
+					Modifier img</a>
+				<a href="{{ path('company_delete', {'slug': company.slug}) }}" class="btn btn-danger">
+					<i class="fas fa-trash"></i>
+					Supprimer</a>
+			</div>
+		</div>
+
+	{% endif %}
+	<div class="container py-5">
+		<div class="card">
+			<div class="card-body">
+				<h1 class="card-title">{{ company.name }}</h1>
+				<hr>
+
+				<div class="col-md-6">
+					<h5>Description:</h5>
+					<p>{{ company.description }}</p>
+					<h5>Compétences:</h5>
+					<ul>
+						{% for sector in company.sector %}
+							{{ sector.name }}<br>
+						{% endfor %}
+					</ul>
+				</div>
+
+				<div class="text-center">
+					<img src="/uploads/images/{{ company.cover }}" alt="cover de {{ company.name }}" class="img-fluid">
+				</div>
+
+				<div class="text-center mt-4">
+
+					{% if app.user or is_granted('ROLE_ADMIN') %}
+						<div class="text-center mt-4">
+							<a href="{{ path('company_email', {'slug': company.slug}) }}" class="btn btn-warning mx-2 d-block">Contacter</a>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

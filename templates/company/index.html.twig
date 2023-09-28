@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos Companies{% endblock %}
+
+
+{% block body %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12 mb-3">
+				<div class="dropdown">
+					<button class="btn btn-primary dropdown-toggle w-100" type="button" id="dropdownSectors" data-bs-toggle="dropdown" aria-expanded="false">
+						Secteurs d'activités
+					</button>
+					<ul class="dropdown-menu w-100" aria-labelledby="dropdownSectors">
+						<li>
+							<a class="dropdown-item" href="{{ path('companies_index') }}">Tous les secteurs</a>
+						</li>
+						<input type="text" id="searchInput" class="form-control" placeholder="Rechercher">
+
+						{% for sector in sectors %}
+							<li>
+								<a class="dropdown-item" href="{{ path('companies_index', {'sector': sector.id}) }}">{{ sector.name }}</a>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-9 mx-auto">
+				{% if companies is empty %}
+					<div class="alert alert-info" role="alert">
+						Aucune entreprise ne correspond à votre filtre.
+					</div>
+				{% else %}
+					<div class="row">
+						{% for company in pagination.data %}
+							{% if company.visibility == '1' %}
+								<div class="col-md-4">
+									<div class="card bg-light mb-3">
+										<div class="card-header text-center">
+											<a href="{{ path('companies_show', {'slug': company.slug}) }}">
+												{{ company.name }}
+											</a>
+										</div>
+										<div class="card-body">
+											<div class="card-text">
+												{% set sectorCount = company.sector|length %}
+												{% if sectorCount > 3 %}
+													{% for i in 0..2 %}
+														<a href="{{ path('companies_index', {'sector': company.sector[i].id}) }}">{{ company.sector[i].name }}</a>
+													{% endfor %}
+													<p>...</p>
+												{% else %}
+													{% for sector in company.sector %}
+														<a href="{{ path('companies_index', {'sector': sector.id}) }}">{{ sector.name }}</a>
+													{% endfor %}
+												{% endif %}
+												<div class="text-center mt-3">
+													<img src="/uploads/images/{{company.cover}}" alt="cover de {{company.name}}" class="img-fluid">
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							{% endif %}
+						{% endfor %}
+					</div>
+				{% endif %}
+			</div>
+		</div>
+
+			{{pagination.display()}}
+
+	</div>
+
+    <script>
+		// Récupérer le champ de recherche et les éléments de la liste déroulante
+var searchInput = document.getElementById('searchInput');
+var dropdownItems = document.getElementsByClassName('dropdown-item');
+
+// Ajouter un gestionnaire d'événement pour le champ de recherche
+searchInput.addEventListener('keyup', function () {
+var filter = searchInput.value.toLowerCase();
+// Convertir la recherche en minuscules
+
+// Parcourir les éléments de la liste déroulante et afficher/masquer en fonction de la recherche
+for (var i = 0; i < dropdownItems.length; i++) {
+var item = dropdownItems[i];
+var itemName = item.innerText.toLowerCase();
+// Convertir le nom de l'élément en minuscules
+
+// Afficher ou masquer l'élément en fonction de la correspondance de la recherche
+if (itemName.indexOf(filter) > -1) {
+item.style.display = ''; // Afficher l'élément
+} else {
+item.style.display = 'none'; // Masquer l'élément
+}
+}
+});
+	</script>
+
+{% endblock %}

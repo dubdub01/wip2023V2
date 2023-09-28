@@ -1,0 +1,7 @@
+{# your_template.html.twig #}
+<form action="{{ path('companies_index') }}" method="GET">
+	{{form_start(searchForm)}}
+	{{form_widget(searchForm)}}
+	<button type="submit">Rechercher</button>
+	{{form_end(searchForm)}}
+</form>

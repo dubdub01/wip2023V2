@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos Worker
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12 mb-3">
+				<div class="dropdown">
+					<button class="btn btn-primary dropdown-toggle w-100" type="button" id="dropdownSkills" data-bs-toggle="dropdown" aria-expanded="false">
+						{{ 'worker.skills' | trans }}
+					</button>
+					<ul class="dropdown-menu w-100" aria-labelledby="dropdownSkills">
+						<li>
+							<a class="dropdown-item" href="{{ path('workers_index') }}">Toutes les compétences</a>
+						</li>
+						<input type="text" id="searchInput" class="form-control" placeholder="Rechercher">
+						{% for skill in skills %}
+							<li>
+								<a class="dropdown-item {% if selectedSkillsId is not null and skill.id in selectedSkillsId %}active{% endif %}" href="{{ path('workers_index', {'skills': skill.id}) }}">
+									{{ skill.name }}
+								</a>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="row">
+			<div class="col-md-9 mx-auto">
+				{% if workers is empty %}
+					<div class="alert alert-info" role="alert">
+						Aucune Worker ne correspond à votre filtre.
+					</div>
+				{% else %}
+					<div class="row">
+						{% for worker in pagination.data %}
+							{% if worker.visibility == '1' %}
+								{% set url = path('workers_show',{'slug':worker.slug}) %}
+								<div class="col-md-4">
+									<div class="card bg-light mb-3">
+										<div class="card-header text-center">
+											<a href="{{url}}">
+												{{worker.firstname}}
+												{{worker.lastname}}
+											</a>
+										</div>
+										<div class="card-body">
+											<div class="card-text">
+												<p>{{ worker.age|date('d-m-Y') }}</p>
+												{% set skillCount = worker.skills|length %}
+												{% if skillCount > 3 %}
+													{% for i in 0..2 %}
+														<a href="{{ path('workers_index', {'skill': worker.skills[i].id}) }}">{{ worker.skills[i].name }}</a>
+													{% endfor %}
+													<p>...</p>
+												{% else %}
+													{% for skill in worker.skills %}
+														<a href="{{ path('workers_index', {'skill': skill.id}) }}">{{ skill.name }}</a>
+													{% endfor %}
+												{% endif %}
+											</div>
+										</div>
+									</div>
+								</div>
+							{% endif %}
+						{% endfor %}
+					</div>
+				{% endif %}
+			</div>
+		</div>
+		{{pagination.display()}}
+
+	</div>
+	<script>
+		// Récupérer le champ de recherche et les éléments de la liste déroulante
+var searchInput = document.getElementById('searchInput');
+var dropdownItems = document.getElementsByClassName('dropdown-item');
+
+// Ajouter un gestionnaire d'événement pour le champ de recherche
+searchInput.addEventListener('keyup', function () {
+var filter = searchInput.value.toLowerCase();
+// Convertir la recherche en minuscules
+
+// Parcourir les éléments de la liste déroulante et afficher/masquer en fonction de la recherche
+for (var i = 0; i < dropdownItems.length; i++) {
+var item = dropdownItems[i];
+var itemName = item.innerText.toLowerCase();
+// Convertir le nom de l'élément en minuscules
+
+// Afficher ou masquer l'élément en fonction de la correspondance de la recherche
+if (itemName.indexOf(filter) > -1) {
+item.style.display = ''; // Afficher l'élément
+} else {
+item.style.display = 'none'; // Masquer l'élément
+}
+}
+});
+	</script>
+{% endblock %}
