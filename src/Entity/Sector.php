@@ -7,20 +7,26 @@ use App\Repository\SectorRepository;
 use ApiPlatform\Metadata\ApiResource;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: SectorRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext:['groups'=>['user:read', 'company:read']],
+)]
 class Sector
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user:read' , 'company:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read' , 'company:read'])]
     private ?string $name = null;
 
     #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'Sector')]
+    #[Groups(['sector:read'])]
     private Collection $companies;
 
     public function __construct()

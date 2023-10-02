@@ -6,46 +6,60 @@ use App\Entity\Province;
 use Cocur\Slugify\Slugify;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CompanyRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext:['groups'=>['user:read']],
+)]
+
 class Company
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read'])]
     private ?string $eMail = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read'])]
     private ?string $cover = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['user:read'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read'])]
     private ?string $slug = null;
 
     #[ORM\Column]
+    #[Groups(['user:read'])]
     private ?bool $visibility = null;
 
     #[ORM\ManyToOne(inversedBy: 'company')]
+    #[Groups(['company:read'])]
     private ?User $user = null;
 
     #[ORM\ManyToMany(targetEntity: Sector::class, inversedBy: 'companies')]
+    #[Groups(['user:read'])]
     private Collection $sector;
 
     #[ORM\ManyToOne(inversedBy: 'companies')]
+    #[Groups(['user:read'])]
     private ?Province $provinceName = null;
 
     public function __construct()
