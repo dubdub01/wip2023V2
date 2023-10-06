@@ -19,6 +19,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     normalizationContext:['groups'=>['user:read', 'worker:read']],
+    
 )]
 #[ApiFilter(SearchFilter::class, properties:[
     "sector",

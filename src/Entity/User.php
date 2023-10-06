@@ -3,25 +3,42 @@
 namespace App\Entity;
 
 use Cocur\Slugify\Slugify;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiResource;
+use App\Controller\AccountController;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields:['eMail'], message: "Un autre utilisateur possède déjà cette adresse e-mail, merci de la modifier")]
 #[ApiResource(
     normalizationContext:['groups'=>['user:read']],
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Post(
+            controller: AccountController::class,
+            uriTemplate: '/users/upload',
+            name: 'myPost',
+            openapiContext:[
+                "summary"=> "Ajouer un user avec un fichier",
+                "description" => "Ajouter un user avec un fichier"
+            ],
+            deserialize:false
+        )
+    ]
 )]
-
-
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]

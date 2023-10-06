@@ -19,6 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -42,16 +43,15 @@ class AccountController extends AbstractController
 
         ]);
     }
-   
+
     /**
      * Permet à l'utilisateur de se déconnecter
      *
      * @return void
      */
-    #[Route("/logout", name:"account_logout")]
+    #[Route("/logout", name: "account_logout")]
     public function logout(): void
     {
-
     }
 
     /**
@@ -62,7 +62,7 @@ class AccountController extends AbstractController
      * @param UserPasswordHasherInterface $hasher
      * @return Response
      */
-    #[Route("/register", name:"account_register")]
+    #[Route("/register", name: "account_register")]
     public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher, Security $security): Response
     {
         if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -74,22 +74,19 @@ class AccountController extends AbstractController
         $form = $this->createForm(RegistrationType::class, $user);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             // gestion de mon image
             $file = $form['image']->getData();
-            if(!empty($file))
-            {
-                $originalFilename = pathinfo($file->getClientOriginalName(),PATHINFO_FILENAME);
+            if (!empty($file)) {
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = transliterator_transliterate('Any-Latin;Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
-                $newFilename = $safeFilename."-".uniqid().".".$file->guessExtension();
-                try{
+                $newFilename = $safeFilename . "-" . uniqid() . "." . $file->guessExtension();
+                try {
                     $file->move(
                         $this->getParameter('images_directory'),
                         $newFilename
                     );
-                }catch(FileException $e)
-                {
+                } catch (FileException $e) {
                     return $e->getMessage();
                 }
                 $user->setImage($newFilename);
@@ -107,13 +104,11 @@ class AccountController extends AbstractController
             );
 
             return $this->redirectToRoute('account_login');
-
         }
 
-        return $this->render("account/registration.html.twig",[
+        return $this->render("account/registration.html.twig", [
             'myform' => $form->createView()
         ]);
-
     }
 
 
@@ -127,11 +122,10 @@ class AccountController extends AbstractController
     public function profile(Request $request, EntityManagerInterface $manager): Response
     {
         $user = $this->getUser(); //recupération du User connecté
-        
-        return $this->render("account/profile.html.twig",[
+
+        return $this->render("account/profile.html.twig", [
             'user' => $user
         ]);
-    
     }
 
 
@@ -142,7 +136,7 @@ class AccountController extends AbstractController
      * @param EntityManagerInterface $manager
      * @return Response
      */
-    #[Route("/account/mail", name:"account_mail")]
+    #[Route("/account/mail", name: "account_mail")]
     #[IsGranted("ROLE_USER")]
     public function mail(Request $request, EntityManagerInterface $manager): Response
     {
@@ -150,8 +144,7 @@ class AccountController extends AbstractController
         $form = $this->createForm(AccountType::class, $user);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             $manager->persist($user);
             $manager->flush();
 
@@ -161,8 +154,8 @@ class AccountController extends AbstractController
             );
         }
 
-        return $this->render("account/mail.html.twig",[
-            'myform' =>$form->createView()
+        return $this->render("account/mail.html.twig", [
+            'myform' => $form->createView()
         ]);
     }
 
@@ -174,7 +167,7 @@ class AccountController extends AbstractController
      * @param UserPasswordHasherInterface $hasher
      * @return Response
      */
-    #[Route("/account/password-update", name:'account_password')]
+    #[Route("/account/password-update", name: 'account_password')]
     #[IsGranted("ROLE_USER")]
     public function updatePassword(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
     {
@@ -182,13 +175,11 @@ class AccountController extends AbstractController
         $user = $this->getUser();
         $form = $this->createForm(PasswordUpdateType::class, $passwordUpdate);
         $form->handleRequest($request);
-        
-        if($form->isSubmitted() && $form->isValid())
-        {
-            if(!password_verify($passwordUpdate->getOldPassword(),$user->getPassword()))
-            {
-                $form->get('oldPassword')->addError(New FormError("Le mot de passe que vous avez entré n'est pas votre mot de passe actuel"));
-            }else{
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (!password_verify($passwordUpdate->getOldPassword(), $user->getPassword())) {
+                $form->get('oldPassword')->addError(new FormError("Le mot de passe que vous avez entré n'est pas votre mot de passe actuel"));
+            } else {
                 $newPassword = $passwordUpdate->getNewPassword();
                 $hash = $hasher->hashPassword($user, $newPassword);
 
@@ -203,12 +194,10 @@ class AccountController extends AbstractController
 
                 return $this->redirectToRoute('app_home');
             }
-
         }
-        return $this->render("account/password.html.twig",[
+        return $this->render("account/password.html.twig", [
             'myform' => $form->createView()
         ]);
-
     }
     /**
      * Modifier l'image du User
@@ -217,7 +206,7 @@ class AccountController extends AbstractController
      * @param EntityManagerInterface $manager
      * @return Response
      */
-    #[Route("/account/imgmodify",name:"account_modifimg")]
+    #[Route("/account/imgmodify", name: "account_modifimg")]
     #[IsGranted("ROLE_USER")]
     public function imgModify(Request $request, EntityManagerInterface $manager): Response
     {
@@ -226,27 +215,23 @@ class AccountController extends AbstractController
         $form = $this->createForm(ImgModifyType::class, $imgModify);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             //supprimer l'image dans le dossier
-            if(!empty($user->getImage()))
-            {
-                unlink($this->getParameter('images_directory').'/'.$user->getImage());
+            if (!empty($user->getImage())) {
+                unlink($this->getParameter('images_directory') . '/' . $user->getImage());
             }
 
             $file = $form['newImage']->getData();
-            if(!empty($file))
-            {
-                $originalFilename = pathinfo($file->getClientOriginalName(),PATHINFO_FILENAME);
+            if (!empty($file)) {
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = transliterator_transliterate('Any-Latin;Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
-                $newFilename = $safeFilename."-".uniqid().".".$file->guessExtension();
-                try{
+                $newFilename = $safeFilename . "-" . uniqid() . "." . $file->guessExtension();
+                try {
                     $file->move(
                         $this->getParameter('images_directory'),
                         $newFilename
                     );
-                }catch(FileException $e)
-                {
+                } catch (FileException $e) {
                     return $e->getMessage();
                 }
                 $user->setImage($newFilename);
@@ -255,18 +240,16 @@ class AccountController extends AbstractController
             $manager->flush();
 
             $this->addFlash(
-            'success',
-            'Votre avatar a bien été modifié'
-        );
+                'success',
+                'Votre avatar a bien été modifié'
+            );
 
-        return $this->redirectToRoute('app_home');
-
+            return $this->redirectToRoute('app_home');
         }
 
-        return $this->render("account/imgModify.html.twig",[
+        return $this->render("account/imgModify.html.twig", [
             'myform' => $form->createView()
         ]);
-
     }
 
     /**
@@ -275,14 +258,13 @@ class AccountController extends AbstractController
      * @param EntityManagerInterface $manager
      * @return Response
      */
-    #[Route("/account/delimg", name:'account_delimg')]
+    #[Route("/account/delimg", name: 'account_delimg')]
     #[IsGranted("ROLE_USER")]
     public function removeImg(EntityManagerInterface $manager): Response
     {
         $user = $this->getUser();
-        if(!empty($user->getImage()))
-        {
-            unlink($this->getParameter('images_directory').'/'.$user->getImage());
+        if (!empty($user->getImage())) {
+            unlink($this->getParameter('images_directory') . '/' . $user->getImage());
             $user->setImage('');
             $manager->persist($user);
             $manager->flush();
@@ -296,5 +278,42 @@ class AccountController extends AbstractController
         return $this->redirectToRoute('app_home');
     }
 
+    private $manager;
 
+    public function __construct(EntityManagerInterface $manager)
+    {
+        $this->manager = $manager;
     }
+
+
+    public function __invoke(Request $request, UserPasswordHasherInterface $hasher)
+    {
+        $data = new User();
+        $uploadedFile = $request->files->get('image');
+        if (!$uploadedFile) {
+            die("no file uploaded");
+        } else {
+            $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeFilename = transliterator_transliterate('Any-Latin;Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+            $newFilename = $safeFilename . "-" . uniqid() . "." . $uploadedFile->guessExtension();
+            try {
+                $uploadedFile->move(
+                    $this->getParameter('images_directory'),
+                    $newFilename
+                );
+            } catch (FileException $e) {
+                return $e->getMessage();
+            }
+            $data->setImage($newFilename);
+        }
+        $data->setUsername($request->request->get('username'));
+        $data->setEmail($request->request->get('eMail'));
+        $hash = $hasher->hashPassword($data, $request->get('password'));
+        $data->setPassword($hash);
+
+        $this->manager->persist($data);
+        $this->manager->flush();
+
+        return $data;
+    }
+}
