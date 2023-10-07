@@ -11,15 +11,22 @@ use App\Form\RegistrationType;
 use App\Form\PasswordUpdateType;
 use Symfony\Component\Form\FormError;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Util\Json;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -279,23 +286,40 @@ class AccountController extends AbstractController
     }
 
     private $manager;
+    private $validator;
 
-    public function __construct(EntityManagerInterface $manager)
+    public function __construct(EntityManagerInterface $manager, ValidatorInterface $validator)
     {
         $this->manager = $manager;
+        $this->validator = $validator;
     }
 
     
     public function __invoke(Request $request, UserPasswordHasherInterface $hasher)
     {
+
         $data = new User();
         $uploadedFile = $request->files->get('image');
+        $data->setUsername($request->request->get('username'));
+        $data->setEmail($request->request->get('eMail'));
+        if (!$request->get('password')){
+            $data->setPassword($request->get('password'));
+        }else{
+
+            $hash = $hasher->hashPassword($data, $request->get('password'));
+            $data->setPassword($hash);
+            
+        }
         if (!$uploadedFile) {
-            die("no file uploaded");
+            return $data;
         } else {
             $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
             $safeFilename = transliterator_transliterate('Any-Latin;Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
             $newFilename = $safeFilename . "-" . uniqid() . "." . $uploadedFile->guessExtension();
+            $acceptFile = ['jpg', 'jpeg', 'png', 'gif'];
+            if (!in_array($uploadedFile->guessExtension(), $acceptFile)) {
+                return $data;
+            }
             try {
                 $uploadedFile->move(
                     $this->getParameter('images_directory'),
@@ -305,12 +329,14 @@ class AccountController extends AbstractController
                 return $e->getMessage();
             }
         }
-        
+
         $data->setImage($newFilename);
-        $data->setUsername($request->request->get('username'));
-        $data->setEmail($request->request->get('eMail'));
-        $hash = $hasher->hashPassword($data, $request->get('password'));
-        $data->setPassword($hash);
+
+        $errors = $this->validator->validate($data);
+        if (count($errors) > 0) {
+            return $data;
+            
+        }
 
         $this->manager->persist($data);
         $this->manager->flush();

@@ -48,6 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: "Vous devez entrer un email")]
     #[Assert\Email(message: "Veuillez entrer un e-mail valide")]
     #[Groups(['user:read'])]
     private ?string $eMail = null;
@@ -60,6 +61,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank(message: "Vous devez entrer un mdp")]
     #[Assert\Length(min: 8, max: 255, minMessage: "Votre mot de passe doit faire plus de 8 caractères")]
     #[Groups(['user:read'])]
     private ?string $password = null;
@@ -82,8 +84,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $messages;
 
     #[ORM\Column(length: 255)]
-    #[Assert\Image(mimeTypes:["image/png","image/jpeg","image/jpg","image/gif"], mimeTypesMessage:"Vous devez upload un fichier jpg, jpeg, png ou gif")]
-    #[Assert\File(maxSize:"3000k", maxSizeMessage:"La taille du fichier est trop grande")]
+    #[Assert\NotBlank(message: "Vous devez entrer une image valide")]
+    // #[Assert\Image(mimeTypes:["image/png","image/jpeg","image/jpg","image/gif"], mimeTypesMessage:"Vous devez upload un fichier jpg, jpeg, png ou gif")]
+    // #[Assert\File(maxSize:"3000k", maxSizeMessage:"La taille du fichier est trop grande")]
     #[Groups(['user:read'])]
     private ?string $image = null;
 
