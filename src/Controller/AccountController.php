@@ -285,7 +285,7 @@ class AccountController extends AbstractController
         $this->manager = $manager;
     }
 
-
+    
     public function __invoke(Request $request, UserPasswordHasherInterface $hasher)
     {
         $data = new User();
@@ -304,8 +304,9 @@ class AccountController extends AbstractController
             } catch (FileException $e) {
                 return $e->getMessage();
             }
-            $data->setImage($newFilename);
         }
+        
+        $data->setImage($newFilename);
         $data->setUsername($request->request->get('username'));
         $data->setEmail($request->request->get('eMail'));
         $hash = $hasher->hashPassword($data, $request->get('password'));
