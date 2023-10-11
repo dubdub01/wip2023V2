@@ -10,6 +10,7 @@ use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiResource;
 use App\Controller\AccountController;
 use ApiPlatform\Metadata\GetCollection;
+use App\Controller\ApiAccountController;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -28,9 +29,9 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
         new GetCollection(),
         new Post(),
         new Post(
-            controller: AccountController::class,
+            controller: ApiAccountController::class,
             uriTemplate: '/users/upload',
-            name: 'myPost',
+            name: 'userPost',
             openapiContext:[
                 "summary"=> "Ajouer un user avec un fichier",
                 "description" => "Ajouter un user avec un fichier"
@@ -61,7 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Assert\NotBlank(message: "Vous devez entrer un mdp")]
+    #[Assert\NotBlank(message: "Vous devez entrer un mot de passe")]
     #[Assert\Length(min: 8, max: 255, minMessage: "Votre mot de passe doit faire plus de 8 caractères")]
     #[Groups(['user:read'])]
     private ?string $password = null;
