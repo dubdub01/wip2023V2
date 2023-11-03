@@ -105,9 +105,14 @@ class Worker
     #[Groups(['worker:read'])]
     private ?User $user = null;
 
+    #[ORM\OneToMany(mappedBy: 'worker', targetEntity: Rating::class)]
+    #[Groups(['worker:read'])]
+    private Collection $ratings;
+
     public function __construct()
     {
         $this->skills = new ArrayCollection();
+        $this->ratings = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -253,6 +258,36 @@ class Worker
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Rating>
+     */
+    public function getRatings(): Collection
+    {
+        return $this->ratings;
+    }
+
+    public function addRating(Rating $rating): static
+    {
+        if (!$this->ratings->contains($rating)) {
+            $this->ratings->add($rating);
+            $rating->setWorker($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRating(Rating $rating): static
+    {
+        if ($this->ratings->removeElement($rating)) {
+            // set the owning side to null (unless already changed)
+            if ($rating->getWorker() === $this) {
+                $rating->setWorker(null);
+            }
+        }
 
         return $this;
     }
