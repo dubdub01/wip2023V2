@@ -41,28 +41,28 @@ class MailerController extends AbstractController
         ]);    
     }
     
-    #[Route('/company/{slug}/email', name: 'company_email')]
-    public function sendEmail(MailerInterface $mailer, Company $company, EntityManagerInterface $manager, Request $request): Response
-    {
-        $creatorEmail = $company->getUser()->getEmail();
-        $user = $this->getUser();
-        $email = (new Email())
-            ->from('noreply@wip.be')
-            ->to($creatorEmail)
-            ->subject('Votre profil intéresse')
-            ->text('Bonjour ' .$company->getUser()->getUsername(). ' un utilisateur est intéressé par votre company ' .$company->getName(). ', vous pouvez le contacter sur cette adresse mail : ' .$user->getEmail())
-            ->html('<p>Bonjour ' .$company->getUser()->getUsername(). ' un utilisateur est intéressé par votre company ' .$company->getName(). ', vous pouvez le contacter sur cette adresse mail : ' .$user->getEmail().' </p>');
+    // #[Route('/company/{slug}/email', name: 'company_email')]
+    // public function sendEmail(MailerInterface $mailer, Company $company, EntityManagerInterface $manager, Request $request): Response
+    // {
+    //     $creatorEmail = $company->getUser()->getEmail();
+    //     $user = $this->getUser();
+    //     $email = (new Email())
+    //         ->from('noreply@wip.be')
+    //         ->to($creatorEmail)
+    //         ->subject('Votre profil intéresse')
+    //         ->text('Bonjour ' .$company->getUser()->getUsername(). ' un utilisateur est intéressé par votre company ' .$company->getName(). ', vous pouvez le contacter sur cette adresse mail : ' .$user->getEmail())
+    //         ->html('<p>Bonjour ' .$company->getUser()->getUsername(). ' un utilisateur est intéressé par votre company ' .$company->getName(). ', vous pouvez le contacter sur cette adresse mail : ' .$user->getEmail().' </p>');
 
-        $mailer->send($email);
+    //     $mailer->send($email);
 
-        $this->addFlash(
-            'success',
-            'Mail Envoyé'
-        );
+    //     $this->addFlash(
+    //         'success',
+    //         'Mail Envoyé'
+    //     );
 
-        return $this->render('company/companyPartials.html.twig', [
-            "company" => $company
-        ]);
-    }
+    //     return $this->render('company/companyPartials.html.twig', [
+    //         "company" => $company
+    //     ]);
+    // }
     
 }

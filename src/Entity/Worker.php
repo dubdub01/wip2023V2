@@ -5,14 +5,19 @@ namespace App\Entity;
 use App\Entity\Skills;
 use Cocur\Slugify\Slugify;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Post;
 use Doctrine\DBAL\Types\Types;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiFilter;
+use App\Controller\MailerController;
 use App\Repository\WorkerRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use App\Controller\ApiWorkerController;
+use App\Controller\ApiWorkerMailController;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -23,7 +28,24 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     normalizationContext:['groups'=>['user:read', 'worker:read']],
-    
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Put(),
+        new Delete(),
+        new Patch(),
+        new Post(
+            controller: ApiWorkerMailController::class,
+            uriTemplate: '/workers/{id}/email',
+            name: 'workerMailPost',
+            openapiContext:[
+                "summary"=> "envoyer un mail",
+                "description" => "envoyer un mail"
+            ],
+            deserialize:false
+        )
+    ]
 )]
 #[ApiFilter(SearchFilter::class, properties:[
     "sector",

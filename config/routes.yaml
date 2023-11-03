@@ -7,3 +7,8 @@ controllers:
 # config/routes.yaml
 api_login_check:
     path: /api/login_check
+
+api_mailer_worker_email:
+    path: /api/workers/{id}/email
+    controller: App\Controller\MailerController::sendEmailWorker
+    methods: ['POST'] # Vous pouvez limiter les méthodes HTTP autorisées si nécessaire
