@@ -10,5 +10,10 @@ api_login_check:
 
 api_mailer_worker_email:
     path: /api/workers/{id}/email
-    controller: App\Controller\MailerController::sendEmailWorker
+    controller: 'App\Controller\MailerController'
     methods: ['POST'] # Vous pouvez limiter les méthodes HTTP autorisées si nécessaire
+
+app_remove_has_contacted:
+    path: '/api/users/{userId}/workers/{workerId}/has-contacted'
+    controller: 'App\Controller\HasContactedController'
+    methods: ['DELETE']

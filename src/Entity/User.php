@@ -95,6 +95,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private Collection $workers;
 
+    #[ORM\ManyToMany(targetEntity: Worker::class, inversedBy: 'contacted')]
+    #[Groups(['user:read'])]
+    private Collection $hasContacted;
+
 
 
     #[ORM\PrePersist]
@@ -112,6 +116,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->company = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->workers = new ArrayCollection();
+        $this->hasContacted = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -306,6 +311,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $worker->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Worker>
+     */
+    public function getHasContacted(): Collection
+    {
+        return $this->hasContacted;
+    }
+
+    public function addHasContacted(Worker $hasContacted): static
+    {
+        if (!$this->hasContacted->contains($hasContacted)) {
+            $this->hasContacted->add($hasContacted);
+        }
+
+        return $this;
+    }
+
+    public function removeHasContacted(Worker $hasContacted): static
+    {
+        $this->hasContacted->removeElement($hasContacted);
 
         return $this;
     }

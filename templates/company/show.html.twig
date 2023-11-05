@@ -38,11 +38,7 @@
 
 				<div class="text-center mt-4">
 
-					{% if app.user or is_granted('ROLE_ADMIN') %}
-						<div class="text-center mt-4">
-							<a href="{{ path('company_email', {'slug': company.slug}) }}" class="btn btn-warning mx-2 d-block">Contacter</a>
-						</div>
-					{% endif %}
+					
 				</div>
 			</div>
 		</div>

@@ -102,17 +102,20 @@ class Worker
     private Collection $skills;
 
     #[ORM\ManyToOne(inversedBy: 'workers')]
-    #[Groups(['worker:read'])]
     private ?User $user = null;
 
     #[ORM\OneToMany(mappedBy: 'worker', targetEntity: Rating::class)]
     #[Groups(['worker:read'])]
     private Collection $ratings;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'hasContacted')]
+    private Collection $contacted;
+
     public function __construct()
     {
         $this->skills = new ArrayCollection();
         $this->ratings = new ArrayCollection();
+        $this->contacted = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -287,6 +290,33 @@ class Worker
             if ($rating->getWorker() === $this) {
                 $rating->setWorker(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getContacted(): Collection
+    {
+        return $this->contacted;
+    }
+
+    public function addContacted(User $contacted): static
+    {
+        if (!$this->contacted->contains($contacted)) {
+            $this->contacted->add($contacted);
+            $contacted->addHasContacted($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContacted(User $contacted): static
+    {
+        if ($this->contacted->removeElement($contacted)) {
+            $contacted->removeHasContacted($this);
         }
 
         return $this;
