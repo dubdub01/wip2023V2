@@ -2,12 +2,20 @@
 
 namespace App\Entity;
 
+use App\Entity\Sector;
 use App\Entity\Province;
 use Cocur\Slugify\Slugify;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
 use Doctrine\DBAL\Types\Types;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CompanyRepository;
+use ApiPlatform\Metadata\GetCollection;
+use App\Controller\ApiUploadImageController;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -16,7 +24,25 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     normalizationContext:['groups'=>['user:read']],
-)]
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Put(),
+        new Delete(),
+        new Patch(),
+        new Post(
+            controller: ApiUploadImageController::class,
+            uriTemplate: '/companies/{id}/upload',
+            openapiContext:[
+                "summary"=> "Ajouter une image à l'entreprise",
+                "description" => "Ajouter une image à l'entreprise"
+            ],
+            deserialize:false
+        )
+    ]
+
+    )]
 
 class Company
 {

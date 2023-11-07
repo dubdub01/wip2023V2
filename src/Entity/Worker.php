@@ -22,6 +22,7 @@ use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use App\Controller\ApiUploadCVController;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: WorkerRepository::class)]
@@ -44,6 +45,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 "description" => "envoyer un mail"
             ],
             deserialize:false
+        ),
+        new Post(
+            controller: ApiUploadCVController::class,
+            uriTemplate: '/workers/{id}/upload',
+            name: 'workerUploadPost',
+            openapiContext:[
+                "summary"=> "Ajouer un cv au worker",
+                "description" => "Ajouter un cv au worker"
+            ],
         )
     ]
 )]
