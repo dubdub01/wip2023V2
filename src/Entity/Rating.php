@@ -2,13 +2,35 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\Repository\RatingRepository;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\RatingRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use App\Controller\ApiAccountController;
+use App\Controller\ApiRatingController;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RatingRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext:['groups'=>['user:read']],
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Post(
+            controller: ApiRatingController::class,
+            uriTemplate: '/ratings/{id}/rating',
+            name: 'ratingPost',
+            openapiContext:[
+                "summary"=> "Ajouer une note au worker et le supprimer de la liste des contact",
+                "description" => "Ajouter une note au worker et le supprimer de la liste des contact"
+            ],
+            deserialize:false
+        )
+    ]
+)]
 class Rating
 {
     #[ORM\Id]
