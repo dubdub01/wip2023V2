@@ -22,6 +22,7 @@ use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use App\Controller\ApiDeleteWorkerController;
 use App\Controller\ApiUploadCVController;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -53,6 +54,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
             openapiContext:[
                 "summary"=> "Ajouer un cv au worker",
                 "description" => "Ajouter un cv au worker"
+            ],
+        ),
+        new Delete(
+            controller: ApiDeleteWorkerController::class,
+            uriTemplate: '/workers/{id}/delete',
+            name: 'deleteWorker and ratings',
+            openapiContext:[
+                "summary"=> "supprimer un worker et ses notes",
+                "description" => "supprimer un worker et ses notes"
             ],
         )
     ]
@@ -114,7 +124,7 @@ class Worker
     #[ORM\ManyToOne(inversedBy: 'workers')]
     private ?User $user = null;
 
-    #[ORM\OneToMany(mappedBy: 'worker', targetEntity: Rating::class)]
+    #[ORM\OneToMany(mappedBy: 'worker', targetEntity: Rating::class, orphanRemoval: true, cascade: ["persist", "remove"])]
     #[Groups(['worker:read'])]
     private Collection $ratings;
 

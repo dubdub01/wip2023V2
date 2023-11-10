@@ -1,0 +1,9 @@
+{% block body %}
+    <p>Bonjour {{ worker.getUser().getUsername() }},</p>
+    
+    <p>Un utilisateur est intéressé par votre profil de travailleur sur notre plateforme.</p>
+    
+    <p>Vous pouvez le contacter à l'adresse e-mail suivante : {{ interestedUser.getEmail() }}</p>
+    
+    <p>Merci d'utiliser notre service!</p>
+{% endblock %}

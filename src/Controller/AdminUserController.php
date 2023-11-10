@@ -23,7 +23,7 @@ class AdminUserController extends AbstractController
      * @param UserRepository $repo
      * @return Response
      */
-    #[Route('/admin', name: 'admin_user_index')]
+    #[Route('/', name: 'admin_user_index')]
     #[IsGranted("ROLE_ADMIN")]
     public function index(UserRepository $repo): Response
     {

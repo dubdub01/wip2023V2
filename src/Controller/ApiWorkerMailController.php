@@ -25,8 +25,15 @@ class ApiWorkerMailController extends AbstractController
             ->to($creatorEmail)
             ->subject('Votre profil intéresse')
             ->text('Bonjour ' . $worker->getUser()->getUsername() . ' un utilisateur est intéressé par votre profil de worker, vous pouvez le contacter sur cette adresse mail : '.$user->getEmail())
-            ->html('<p>See Twig integration for better HTML integration!</p>');
-        $data = json_decode($request->getContent(), true);
+            ->html(
+                $this->renderView(
+                    '/templates/mailler/worker_interest.html.twig',
+                    [
+                        'worker' => $worker,
+                        'interestedUser' => $user,
+                    ]
+                )
+            );        $data = json_decode($request->getContent(), true);
 
         try {
 
